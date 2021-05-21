@@ -1,5 +1,6 @@
-Case study II employed Escherichia coli (strain K12 MG1655) dataset obtained from Liu Lab [1]. 
-The dataset was acquired using an Orbitrap Fusion Lumos mass spectrometer.
-The resulting data comprised of 14 raw files. 
+The HeLa dataset, which was used in case study 1, was obtained from Kelleher Lab [1]. 
+The dataset comprised of 10 MS spectra of Hela Histone H4 protein acquired using a Q-FTICR hybrid mass spectrometer.
+The spectra were calibrated externally using an electron-capture dissociation (ECD) bovine ubiquitin spectrum. 
 
-[1] McCool EN, Lodge JM, Basharat AR, Liu X, Coon JJ, Sun L, Capillary Zone Electrophoresis-Tandem Mass Spectrometry with Activated Ion Electron Transfer Dissociation for Large-scale Top-down Proteomics. J Am Soc Mass Spectrom, 30(12):2470-2479(2019).
+
+[1] Frank,A.M., Pesavento,J.J., Mizzen,C.A., Kelleher,N.L. and Pevzner,P.A. (2008) Interpreting top-down mass spectra using spectral alignment. Anal. Chem., 80, 2499–2505.

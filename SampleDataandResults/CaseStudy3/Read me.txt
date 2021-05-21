@@ -1,5 +1,4 @@
-Case study II employed Escherichia coli (strain K12 MG1655) dataset obtained from Liu Lab [1]. 
-The dataset was acquired using an Orbitrap Fusion Lumos mass spectrometer.
-The resulting data comprised of 14 raw files. 
+Case study III employed published Carbonic Anhydrase 2 (CA2) dataset [1]. 
+The dataset contains ETD, CID and HCD spectra obtained using alternating fragmentation technique.  
 
-[1] McCool EN, Lodge JM, Basharat AR, Liu X, Coon JJ, Sun L, Capillary Zone Electrophoresis-Tandem Mass Spectrometry with Activated Ion Electron Transfer Dissociation for Large-scale Top-down Proteomics. J Am Soc Mass Spectrom, 30(12):2470-2479(2019).
+[1] Vyatkina, K., Wu, S., Dekker, L.J., VanDuijn, M.M., Liu, X., Tolic, N., Dvorkin, M., Alexandrova, S., Luider, T.M., Pasa-Tolic, L. and Pevzner, P.A., 2015. De novo sequencing of peptides from top-down tandem mass spectra. Journal of proteome research, 14(11), pp.4450-4462.
