@@ -1,0 +1,2 @@
+# SPECTRUM_v3.0.0.0
+ COINS
