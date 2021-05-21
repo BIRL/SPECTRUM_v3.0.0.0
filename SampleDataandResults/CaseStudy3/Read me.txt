@@ -1,0 +1,5 @@
+Case study II employed Escherichia coli (strain K12 MG1655) dataset obtained from Liu Lab [1]. 
+The dataset was acquired using an Orbitrap Fusion Lumos mass spectrometer.
+The resulting data comprised of 14 raw files. 
+
+[1] McCool EN, Lodge JM, Basharat AR, Liu X, Coon JJ, Sun L, Capillary Zone Electrophoresis-Tandem Mass Spectrometry with Activated Ion Electron Transfer Dissociation for Large-scale Top-down Proteomics. J Am Soc Mass Spectrom, 30(12):2470-2479(2019).
