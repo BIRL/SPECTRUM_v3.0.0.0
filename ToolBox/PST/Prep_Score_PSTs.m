@@ -11,18 +11,49 @@
 
 %% This Fuction is used to pepare the PSTs for Protein Specific Scoring
 function [Tag_Ladder] = Prep_Score_PSTs(User_Taglength_min_threshold,User_Taglength_max_threshold,User_hop_threshold,User_tagError_threshold )
+% % % FPAvalue = getappdata(0,'FPAvalue');
+% % % if isempty(FPAvalue)
+% % %     FPAvalue =0;
+% % % end
+% % % if FPAvalue == 1 %Is FPA checked?
+% % %     Fragments_Peaklist_Data = getappdata(0,'Comp_Peaklist_Data'); %modified 08042020
+% % % else
+% % %     Fragments_Peaklist_Data = getappdata(0,'Peaklist_Data'); %modified 08042020
+% % % end
+% % % size_pkList = size(Fragments_Peaklist_Data,1); % Size/number of the fragments peaks
+% % % % All fragment peaks will be extracted except the mass of the intact protein
+% % % prot_ExperimentalPeakList = sortrows(Fragments_Peaklist_Data(1:size_pkList,:));
+
+%% Updated Below 20210427
+
 FPAvalue = getappdata(0,'FPAvalue');
 if isempty(FPAvalue)
     FPAvalue =0;
 end
 if FPAvalue == 1 %Is FPA checked?
-    Fragments_Peaklist_Data = getappdata(0,'Comp_Peaklist_Data'); %modified 08042020
+    PeakListMW_Comp = getappdata(0,'Comp_Fragments_Masses');
+    size_pkList = size(PeakListMW_Comp ,1); % Size/number of the fragments peaks
+    
+    Intensity_Comp = getappdata(0,'Comp_Int');
+    prot_ExperimentalPeakList = [PeakListMW_Comp Intensity_Comp];
+    
+    
 else
-    Fragments_Peaklist_Data = getappdata(0,'Peaklist_Data'); %modified 08042020
+    %Updated Below 20210427
+    % Fragments_Peaklist_Data = getappdata(0,'Peaklist_Data');
+    
+    % % All fragment peaks will be extracted except the mass of the intact protein
+    % prot_ExperimentalPeakList = sortrows(Fragments_Peaklist_Data(1:size_pkList,:));
+    
+    Fragments_Masses = getappdata(0,'Fragments_Masses');
+    size_pkList = size(Fragments_Masses ,1); % Size/number of the fragments peaks
+    
+    Intensity = getappdata(0,'Int');
+    prot_ExperimentalPeakList = [Fragments_Masses Intensity];
+    %Updated Above 20210427
 end
-size_pkList = size(Fragments_Peaklist_Data,1); % Size/number of the fragments peaks
-% All fragment peaks will be extracted except the mass of the intact protein
-prot_ExperimentalPeakList = sortrows(Fragments_Peaklist_Data(1:size_pkList,:));
+
+%%
 % extract ESTs using the find peaks function
 Tag_ladder = Extract_PSTs(prot_ExperimentalPeakList,User_Taglength_max_threshold,User_Taglength_min_threshold,User_hop_threshold,User_tagError_threshold);
 if ~isempty(Tag_ladder)

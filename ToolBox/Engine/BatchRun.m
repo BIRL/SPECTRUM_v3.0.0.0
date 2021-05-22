@@ -93,8 +93,8 @@ for b= 1:size(DirectoryContents,1)     % for mgf and text files  (all files pres
         end
         %% Generate complementary ions if FPA is checked
         if FPAvalue ==1
-            cd(strcat(pwd,'\FPA'));
-            FinalImp_Data = Compute_FPA(Imported_Data);
+            cd(strcat(pwd,'\COINS'));
+            FinalImp_Data = Compute_COINS(Imported_Data);
 %             Imported_Data = FinalImp_Data;
             
             %write new data in complementary ions folder
