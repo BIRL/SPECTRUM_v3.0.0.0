@@ -37,7 +37,7 @@ for i = 1:numel(USpectralMatches)
         end
     end
     eval = counter*eval;
-    
+
     %% Saving E-Value for each Candidate Protein
     for ProteinListIndex = 1:numel(SpectralMatches)
         if setInd(ProteinListIndex) == 1

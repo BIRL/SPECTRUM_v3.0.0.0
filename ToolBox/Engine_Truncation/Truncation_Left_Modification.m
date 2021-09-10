@@ -1,12 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %           SPECTRUM: A MATLAB Toolbox for Top-down Proteomics     %
-%                           Version 3.0.0.0                        %
+%                           Version 2.0.0                          %
 %        Copyright (c) Biomedical Informatics Research Laboratory, %
 %          Lahore University of Management Sciences Lahore (LUMS), %
 %                           Pakistan.                              %
 %                (http://biolabs.lums.edu.pk/BIRL)                 %
 %                    (safee.ullah@gmail.com)                       %
-%                 Last Modified on: 25-May-2021                    %
+%                 Last Modified on: 25-October-2020                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [Candidate_ProteinsList] = Truncation_Left_Modification(Candidate_ProteinsListInput, Peptide_Tolerance, PepUnit, Frag_technique)
 
@@ -56,10 +56,23 @@ CO = C + O;
  
 %20181019 - Fixing the overloaded function error
 %tol = 2
-% Experimental peak extraction and peak fliping.
-ExperimentalSpectrum = sortrows(getappdata(0,'Peaklist_Data'));
-MolW = ExperimentalSpectrum(size(ExperimentalSpectrum,1));
 
+%%Mol weight 
+if FPAvalue ==1
+    %     ExperimentalPeakList = getappdata(0,'Comp_Peaklist_Data');
+    
+    %%% Updated 20210409   %% BELOW
+    %ExperimentalPeakList = getappdata(0,'Peaklist_Data');
+    PeakListMW_Comp = getappdata(0,'Comp_Fragments_Masses');
+    Intensity_Comp = getappdata(0,'Comp_Int');
+    ExperimentalPeakList = [PeakListMW_Comp, Intensity_Comp];%sortrows(getappdata(0,'Peaklist_Data'));
+    ExperimentalSpectrum = ExperimentalPeakList;
+    MolW = ExperimentalSpectrum(size(ExperimentalSpectrum,1));
+else
+    % Experimental peak extraction and peak fliping.
+    ExperimentalSpectrum = sortrows(getappdata(0,'Peaklist_Data'));
+    MolW = ExperimentalSpectrum(size(ExperimentalSpectrum,1));
+end
 if size(ExperimentalSpectrum,1) == 1
     tolConv = ExperimentalSpectrum(size(ExperimentalSpectrum,1));
 else

@@ -29,6 +29,7 @@ while LoopRun
     end
 end
 index = 1;
+Final_Ladder_raw = {};
 for iter = 1: size(Ladder_raw,1)
     if (User_Taglength_min_threshold <= size(Ladder_raw{iter,1},1))
         Final_Ladder_raw{index, 1}  = Ladder_raw{iter, 1};

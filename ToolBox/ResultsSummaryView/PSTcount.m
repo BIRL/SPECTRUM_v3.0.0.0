@@ -1,12 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %           SPECTRUM: A MATLAB Toolbox for Top-down Proteomics     %
-%                           Version 3.0.0.0                        %
+%                           Version 2.0.0                          %
 %        Copyright (c) Biomedical Informatics Research Laboratory, %
 %          Lahore University of Management Sciences Lahore (LUMS), %
 %                           Pakistan.                              %
 %                (http://biolabs.lums.edu.pk/BIRL)                 %
 %                    (safee.ullah@gmail.com)                       %
-%                 Last Modified on: 25-May-2021                    %
+%                 Last Modified on: 25-October-2020                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function varargout = PSTcount(varargin)
 % PSTCOUNT MATLAB code for PSTcount.fig
@@ -78,7 +78,6 @@ function varargout = PSTcount_OutputFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Get default command line output from handles structure
 varargout{1} = handles.output;
 Tags_Ladder=getappdata(0,'Tags_Ladder');
 Tag = Tags_Ladder(1,:);
@@ -128,6 +127,8 @@ end
 TagCount = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10; count1, count2, count3, count4, count5, count6, count7, count8, count9, count10};
 hold on
 MatData = cell2mat(TagCount);
+
+cla reset; 
 
 FPAvalue = getappdata(0,'FPAvalue');
 if isempty(FPAvalue)

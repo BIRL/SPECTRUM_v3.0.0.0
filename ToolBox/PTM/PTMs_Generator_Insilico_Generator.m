@@ -1,12 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %           SPECTRUM: A MATLAB Toolbox for Top-down Proteomics     %
-%                           Version 3.0.0.0                        %
+%                           Version 2.0.0                          %
 %        Copyright (c) Biomedical Informatics Research Laboratory, %
 %          Lahore University of Management Sciences Lahore (LUMS), %
 %                           Pakistan.                              %
 %                (http://biolabs.lums.edu.pk/BIRL)                 %
 %                    (safee.ullah@gmail.com)                       %
-%                 Last Modified on: 25-May-2021                    %
+%                 Last Modified on: 25-October-2020                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function Modified_Protein_Seqs = PTMs_Generator_Insilico_Generator(Candidate_ProteinsList,Protein_sequence,Protein_ExperimentalMW,Protein_name,Protein_id,PTM_tol,fixed_modifications,variable_modifications,EST_Score,Othermodification_Cysteine,Othermodification_Methionine)

@@ -1,12 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %           SPECTRUM: A MATLAB Toolbox for Top-down Proteomics     %
-%                           Version 3.0.0.0                        %
+%                           Version 2.0.0                          %
 %        Copyright (c) Biomedical Informatics Research Laboratory, %
 %          Lahore University of Management Sciences Lahore (LUMS), %
 %                           Pakistan.                              %
 %                (http://biolabs.lums.edu.pk/BIRL)                 %
 %                    (safee.ullah@gmail.com)                       %
-%                 Last Modified on: 25-May-2021                    %
+%                 Last Modified on: 25-October-2020                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function varargout = Result(varargin)
@@ -196,45 +196,152 @@ if numel(data) ~= 0
     size_data=size(data);
     for out_put=1:size(data)
         progressbar((out_put + (2*variable_progress/3))/variable_progress);
-        
-        % PST determination
-        pst = [];
-        a = [];
-        PSTend= [];
-        S2 = [];
-        S1 = [];
-        for idx=1:numel(Tags_Ladder)
-            PST = strfind(data(out_put,5), Tags_Ladder{1,idx}{1,1});
-            if (isempty(PST{:}))
-                continue %#ok<*AGROW>
-            else
-                c = cell2mat(PST); %to check if number of elements at start position are more than 1
-                if numel(c) == 1
-                    for v=1:numel(c)
-                        S1 = cellfun(@(x) x(1,1),PST);
-                        a(v).start = S1;
-                        a(v).tag = Tags_Ladder{1,idx}{1,1};
-                        a(v).length = numel(a(v).tag);
-                        y = a.length;
-                        PSTend = S1+ y;
-                        a(v).end = PSTend;
-                    end
-                elseif numel(c) > 1 %more than one start value for same tag
-                    for k=1:numel(c)
-                        S2 = PST{1,1}(1,k); %tags catered if start position is diffeent but tag is same
-                        a(k).start = S2;
-                        a(k).tag = Tags_Ladder{1,idx}{1,1};
-                        a(k).length = numel(a(k).tag);
-                        x = a.length;
-                        PSTend = S2+ x;
-                        a(k).end = PSTend;
-                    end
-                end
-                pst = [pst; a(:)];%#ok<*AGROW>   %psts with their seqs, lengths, start and end positions
-                a= [];
+% % % % % % %         
+% % % % % % %        %%PST Determination
+PST_array = [];
+for idx=1:numel(Tags_Ladder)
+    PST_element = Tags_Ladder{idx};
+    PST_array = [PST_array; PST_element];
+end
+
+[~,x]=unique(strcat(PST_array(:,1),PST_array(:,2),PST_array(:,3)));
+PST_array_new=PST_array(x,:);
+      
+pst = [];
+a = [];
+PSTend= [];
+S2 = [];
+S1 = [];
+for p=1:numel(PST_array_new)
+    PST = strfind(data(out_put,5), PST_array_new{p});
+    if (isempty(PST{:}))
+        continue %#ok<*AGROW>
+    else
+        c = cell2mat(PST); %to check if number of elements at start position are more than 1
+        if numel(c) == 1
+            for v=1:numel(c)
+                S1 = cellfun(@(x) x(1,1),PST);
+                a(v).start = S1;
+                a(v).tag = PST_array_new{p};
+                a(v).length = numel(a(v).tag);
+                y = a.length;
+                PSTend = S1+ y;
+                a(v).end = PSTend;
+            end
+        elseif numel(c) > 1 %more than one start value for same tag
+            for k=1:numel(c)
+                S2 = PST{1,1}(1,k); %tags catered if start position is diffeent but tag is same
+                a(k).start = S2;
+                a(k).tag = Tags_Ladder{1,idx}{1,1};
+                a(k).length = numel(a(k).tag);
+                x = a.length;
+                PSTend = S2+ x;
+                a(k).end = PSTend;
             end
         end
+        pst = [pst; a(:)];%#ok<*AGROW>   %psts with their seqs, lengths, start and end positions
+        a= [];
+    end
+end
+count1 = 0;
+count2 = 0;
+count3 = 0;
+count4 = 0;
+count5 = 0;
+count6 = 0;
+count7 = 0;
+count8 = 0;
+count9 = 0;
+count10 = 0;
+
+% % % % % % %        PST_array = [];
+% % % % % % %        for idx=1:numel(Tags_Ladder)
+% % % % % % %            PST_element = Tags_Ladder{idx};
+% % % % % % %            PST_array = [PST_array; PST_element];
+% % % % % % %        end
+% % % % % % %          
+% % % % % % %       [~,x]=unique(strcat(PST_array(:,1),PST_array(:,2),PST_array(:,3)));
+% % % % % % %       PST_array_new=PST_array(x,:);
+% % % % % % % FindPSTs = {};
+% % % % % % % count = 0;
+% % % % % % %       for l=1:size(PST_array_new,1)
+% % % % % % %           for j=2:size(PST_array_new,1)
+% % % % % % %               s1 = char(PST_array_new{l});
+% % % % % % %               comparing_PSTs = ismember(s1,PST_array_new{j});
+% % % % % % %               for p=1:size(comparing_PSTs,2)
+% % % % % % %                   if comparing_PSTs(p) == 1
+% % % % % % %                       count = count +1;
+% % % % % % %                   else
+% % % % % % %                       break
+% % % % % % %                   end
+% % % % % % %               end
+% % % % % % %               if length(comparing_PSTs) == length(s1) & count == length(s1)
+% % % % % % %                   PST_found = PST_array_new{j};
+% % % % % % %                   PST_length_current = length(s1);
+% % % % % % %                   PST_length_new = length(PST_array_new{j});
+% % % % % % %                   if PST_length_new > PST_length_current
+% % % % % % %                       FindPSTs = [FindPSTs; PST_found];
+% % % % % % %                   elseif PST_length_new == length(PST_found)
+% % % % % % %                        is_same = ismember(PST_found, FindPSTs);
+% % % % % % %                       if is_same == 0
+% % % % % % %                           FindPSTs = [PST_found];
+% % % % % % %                       else
+% % % % % % %                           FindPSTs = [FindPSTs];
+% % % % % % %                       end
+% % % % % % %                   else
+% % % % % % %                       FindPSTs = [FindPSTs, s1];
+% % % % % % %                   end
+% % % % % % %                   %             b = accumarray(cumsum([0;diff(comparing_PSTs(:))] == 1).*comparing_PSTs(:)+1,1);
+% % % % % % %               end
+% % % % % % %                             count =0;
+% % % % % % %                             continue
+% % % % % % %           end
+% % % % % % %       end
+% % % % % % %         
+% % % % % % %         
+% % % % % % %         
+% % % % % % %         
         
+        
+        
+% %         % PST determination
+% %         pst = [];
+% %         a = [];
+% %         PSTend= [];
+% %         S2 = [];
+% %         S1 = [];
+% %         for idx=1:numel(Tags_Ladder)
+% %             PST = strfind(data(out_put,5), Tags_Ladder{1,idx}{1,1});
+% %             if (isempty(PST{:}))
+% %                 continue %#ok<*AGROW>
+% %             else
+% %                 c = cell2mat(PST); %to check if number of elements at start position are more than 1
+% %                 if numel(c) == 1
+% %                     for v=1:numel(c)
+% %                         S1 = cellfun(@(x) x(1,1),PST);
+% %                         a(v).start = S1;
+% %                         a(v).tag = Tags_Ladder{1,idx}{1,1};
+% %                         a(v).length = numel(a(v).tag);
+% %                         y = a.length;
+% %                         PSTend = S1+ y;
+% %                         a(v).end = PSTend;
+% %                     end
+% %                 elseif numel(c) > 1 %more than one start value for same tag
+% %                     for k=1:numel(c)
+% %                         S2 = PST{1,1}(1,k); %tags catered if start position is diffeent but tag is same
+% %                         a(k).start = S2;
+% %                         a(k).tag = Tags_Ladder{1,idx}{1,1};
+% %                         a(k).length = numel(a(k).tag);
+% %                         x = a.length;
+% %                         PSTend = S2+ x;
+% %                         a(k).end = PSTend;
+% %                     end
+% %                 end
+% %                 pst = [pst; a(:)];%#ok<*AGROW>   %psts with their seqs, lengths, start and end positions
+% %                 a= [];
+% %             end
+% %         end
+% %         
         %% for iteration converted to cell
         cellnumstart= {};
         cellnumend = {};
@@ -274,292 +381,294 @@ if numel(data) ~= 0
             %% getting unique pst end values
             tags = {'sequence','length', 'start', 'end'};
             tags = [tags; tagseq, taglen, startpst, endpst];   %unique tags with unique start positions
-            sameend = {};
-            sameendtags = {};
-            seqs ={};
-            lens = {};
-            len = {};
-            endings ={};
-            ending ={};
+% % %             sameend = {};
+% % %             sameendtags = {};
+% % %             seqs ={};
+% % %             lens = {};
+% % %             len = {};
+% % %             endings ={};
+% % %             ending ={};
+% % %             
+% % %             %% looping through to find tags with same end position to isolate later
+% % %             for j = 1:size(tags)
+% % %                 for k=2:size(tags)
+% % %                     if j == k   %for the same tag do not compare but continue the loop
+% % %                         continue
+% % %                     end
+% % %                     if isequal(tags{j,4}, tags{k,4}) %if the end position of tags is same then get them and make a list
+% % %                         seqs = tags{j};
+% % %                         len = tags{j,2};
+% % %                         ending = tags{j,4};
+% % %                     end
+% % %                 end
+% % %                 sameend = [sameend; seqs];   %list of tags with same end position
+% % %                 lens = [lens; len]; %list of lengths of the tags with same end position
+% % %                 endings = [endings; ending];
+% % %                 seqs =[];
+% % %                 len =[];
+% % %                 ending =[];
+% % %             end
+% % %             sameend = {sameend, lens, endings};
+% % %             sameendtags =[sameend{:}];   %list of tags with same end position
+% % %             
+% % %             %% if the list of same end tags is empty that is tags have different/unique end values
+% % %             uniqueendtags = {};
+% % %             uniqueend =[];
+% % %             if (isempty(sameendtags)) %getting tags with different/unique end values
+% % %                 for x=2:size(tags)
+% % %                     seqs = tags{x,1};    %then get all the tags in 'tags' list which already has unique start values
+% % %                     lens = tags{x,2};
+% % %                     uniqueend = {seqs, lens};
+% % %                     uniqueendtags = [uniqueendtags; uniqueend];
+% % %                 end
+% % %                 uniqueendtags = [uniqueendtags]; %list of tags with same end position
+% % %             end
+% % %             
+% % %             %% if there are no tags with same ends then loop through unique tags
+% % %             if (isempty(sameendtags))
+% % %                 findpst = [];
+% % %                 findtag = [];
+% % %                 tagswithoutmax = {};
+% % %                 taglistwithoutmax = {};
+% % %                 maxtag = [];
+% % %                 lenmat ={};
+% % %                 MaxValue = [];
+% % %                 findmax =[];
+% % %                 for i=2:size(tags)
+% % %                     for j = 1:size(uniqueendtags)    %loop through list of tags with same end
+% % %                         findpst =  strcmp (tags{i,1}, uniqueendtags{j,1});    %compare with the tags with unique start values
+% % %                         if (isempty(findpst))   %if nothing is returned break the loop
+% % %                             break
+% % %                         end
+% % %                         if findpst == 1    %if there is a match then
+% % %                             taglen = tags{i,2};    %find length of matched tag
+% % %                             lenmat = cell2mat(uniqueendtags(:,2));   %convert this to a matrix to loop through easily
+% % %                             for j = 1:size(lenmat) %matrix of lengths of matched tags
+% % %                                 if lenmat(j) >= lenmat(:,1)    %find max length
+% % %                                     MaxValue = lenmat(j);  %find maximum value in the list by looping through it
+% % %                                 end
+% % %                             end
+% % %                             if taglen == MaxValue   %if the tag length equals maximum value & lenmat(:) ~= MaxValue
+% % %                                 for x=1:size(lenmat)
+% % %                                     findmax =  strfind(lenmat(x,1), MaxValue);
+% % %                                     if findmax == 1
+% % %                                         maxtag = tags{i,1};    %get the tag with max value
+% % %                                         break
+% % %                                     end
+% % %                                 end
+% % %                                 %else findx = strcmp(maxtag(1,1), tags(i,1))
+% % %                                 %if findx == 0
+% % %                             else
+% % %                                 tagswithoutmax = [tags{i,1}];    %if it is not a match then add it to separate list
+% % %                             end
+% % %                         end
+% % %                     end
+% % %                     taglistwithoutmax = [taglistwithoutmax; tagswithoutmax];   %list of tags with unique ends
+% % %                     tagswithoutmax = []; %empty to remove previous value from loop
+% % %                 end
+% % %             end
+% % %             
+% % %             %% if tag list without max is empty check all lenghths then get all tags for there is no max
+% % %             findmaxtag =[];
+% % %             if (isempty(sameendtags))
+% % %                 if (isempty(taglistwithoutmax))
+% % %                     for i=2:size(tags)
+% % %                         findmaxtag =  strfind(maxtag(1,1), tags{i,1});
+% % %                         if findmaxtag == 1
+% % %                             break
+% % %                         else
+% % %                             tagswithoutmax = [tags{i,1}];
+% % %                         end
+% % %                         taglistwithoutmax = [taglistwithoutmax; tagswithoutmax];
+% % %                     end
+% % %                     taglistwithoutmax = [taglistwithoutmax]; %list of tags with unique ends
+% % %                 end
+% % %             end
+% % %             
+% % %             %% if eliminating max tag does not leave behind anything in the list
+% % %             taglistnomaxintags ={};
+% % %             nomaxintags =[];
+% % %             if (~isempty(uniqueendtags))
+% % %                 if (isempty(taglistwithoutmax))%if the list of same end tags is empty that is tags have different/unique end values
+% % %                     for i=2:size(tags)
+% % %                         seqs = tags{i,1};    %then get all the tags in 'tags' list which already has unique start values
+% % %                         lens = tags{i,2};
+% % %                         nomaxintags = {seqs, lens};
+% % %                         taglistnomaxintags = [taglistnomaxintags; nomaxintags];
+% % %                     end
+% % %                     taglistnomaxintags = [taglistnomaxintags]; %list of tags with same end position
+% % %                 end
+% % %             end
+% % %             
+% % %             %% Find sub psts with same end to eliminate
+% % %             if (isempty(sameendtags))
+% % %                 pststags={};
+% % %                 tagsnew = {};
+% % %                 tagfindnew =[];
+% % %                 for i=2:size(tags)
+% % %                     for j=1:size(uniqueendtags)
+% % %                         tagfindnew =  strcmp(tags(i,1) , uniqueendtags{j,1});   %compare tag list with updated list of pst with same end to eliminate
+% % %                         if tagfindnew == 1
+% % %                             pststags = [];
+% % %                             break
+% % %                         else
+% % %                             pststags = [tags(i,:)];
+% % %                         end
+% % %                     end
+% % %                     tagsnew = [tagsnew; pststags];
+% % %                     pststags = [];
+% % %                 end
+% % %                 
+% % %                 if (isempty(tagsnew))  %if this list is empty that is tags minus max value is empty
+% % %                     for i=2:size(tags)
+% % %                         pststags = [tags(i,:)];    %then get all the tags in 'tags' list which exist for it is all that is
+% % %                         tagsnew = [tagsnew; pststags];   %list of tags with same end position
+% % %                     end
+% % %                     tagsnew = [tagsnew];
+% % %                 end
+% % %             end
+% % %             
+% % %             %% Getting tag of max length to avoid counting same tag multiple times for different lengths
+% % %             if (~isempty(sameendtags))
+% % %                 findpst = [];
+% % %                 findtag = [];
+% % %                 tagswithoutmax = {};
+% % %                 taglistwithoutmax = {};
+% % %                 maxtag = {};
+% % %                 lenmat ={};
+% % %                 MaxValue = [];
+% % %                 g ={};
+% % %                 findmax =[];
+% % %                 for i=2:size(tags)
+% % %                     for j = 1:size(sameendtags)    %loop through list of tags with same end
+% % %                         findpst =  strcmp (tags{i,1}, sameendtags{j,1});    %compare with the tags with unique start values
+% % %                         if (isempty(findpst))   %if nothing is returned break the loop
+% % %                             break
+% % %                         end
+% % %                         if findpst == 1    %if there is a match then
+% % %                             taglen = tags{i,2};    %find length of matched tag
+% % %                             lenmat = cell2mat(sameendtags(:,2));   %convert this to a matrix to loop through easily
+% % %                             for j = 1:size(lenmat) %matrix of lengths of matched tags
+% % %                                 if lenmat(j) >= lenmat(:,1)    %find max length
+% % %                                     MaxValue = lenmat(j);  %find maximum value in the list by looping through it
+% % %                                 end
+% % %                             end
+% % %                             if taglen == MaxValue   %if the tag length equals maximum value & lenmat(:) ~= MaxValue
+% % %                                 for x=1:size(lenmat)
+% % %                                     findmax =  strfind(lenmat(x,1), MaxValue);
+% % %                                     if findmax == 1
+% % %                                         maxtag = {tags{i,1}, tags{i,4}};    %get the tag with max value
+% % %                                         break
+% % %                                     end
+% % %                                 end
+% % %                                 %else findx = strcmp(maxtag(1,1), tags(i,1))
+% % %                                 %if findx == 0
+% % %                             else
+% % %                                 tagswithoutmax = {tags{i,1}, tags{i,4}};    %if it is not a match then add it to separate list
+% % %                             end
+% % %                         end
+% % %                     end
+% % %                     taglistwithoutmax = [taglistwithoutmax; tagswithoutmax];   %list of tags with unique ends
+% % %                     tagswithoutmax = []; %empty to remove previous value from loop
+% % %                 end
+% % %             end
+% % %             
+% % %             %% if eliminating max tag does not leave behind anything in the list
+% % %             if (isempty(taglistwithoutmax))%if the list of same end tags is empty that is tags have different/unique end values
+% % %                 for i=2:size(tags)
+% % %                     seqs = tags{i,1};    %then get all the tags in 'tags' list which already has unique start values
+% % %                     lens = tags{i,2};
+% % %                     tagswithoutmax = {seqs, lens};
+% % %                     taglistwithoutmax = [taglistwithoutmax; tagswithoutmax];
+% % %                 end
+% % %                 taglistwithoutmax = [taglistwithoutmax]; %list of tags with same end position
+% % %             end
+% % %             
+% % %             %% Update list of pst with same end
+% % %             if (~isempty(sameendtags))
+% % %                 tagsameend = {};   %subset of psts with same end
+% % %                 tagswithoutmax = {};
+% % %                 for j = 1:size(taglistwithoutmax)
+% % %                     for i=1:size(sameendtags)
+% % %                         findtag =  strcmp(taglistwithoutmax(j,1) , sameendtags{i,1});   %compare updated taglist to get tags with same end
+% % %                         if findtag == 1     %if match then get the matched pst
+% % %                             findnum = strfind((cell2mat(taglistwithoutmax(j,2))) , sameendtags{i,3});
+% % %                             if findnum == 1 %if match then see the end position
+% % %                                 tagswithoutmax = {taglistwithoutmax{j,1}, taglistwithoutmax{j,2}};
+% % %                             end
+% % %                         else    %if no match continue the loop
+% % %                             continue
+% % %                         end
+% % %                     end
+% % %                     tagsameend = [tagsameend; tagswithoutmax];    %subset of pst list updated with same end
+% % %                     tagswithoutmax = [];
+% % %                 end
+% % %                 
+% % %                 %% Find sub psts with same end to eliminate
+% % %                 pststags={};
+% % %                 tagsnew = {};
+% % %                 tagfindnew =[];
+% % %                 for i=2:size(tags)
+% % %                     for j=1:size(tagsameend)
+% % %                         tagfindnew =  strcmp(tags(i,1) , tagsameend{j,1});   %compare tag list with updated list of pst with same end to eliminate
+% % %                         if tagfindnew == 1   %if tags matched then see the end position
+% % %                             findnumz = strfind((cell2mat(tags(i,4))) , tagsameend{j,2});
+% % %                             if findnumz == 1 %if end position is same then skip the tag
+% % %                                 pststags = [];
+% % %                             else    %if end position is different but tag is same then keep it
+% % %                                 pststags = [tags(i,:)];
+% % %                             end
+% % %                         else
+% % %                             pststags = [tags(i,:)];
+% % %                         end
+% % %                     end
+% % %                     tagsnew = [tagsnew; pststags];  %final tags list
+% % %                     pststags = [];
+% % %                 end
+% % %                 
+% % %                 if (isempty(tagsnew))  %if this list is empty that is tags minus max value is empty
+% % %                     pststags = [tags(i,:)];    %then get all the tags in 'tags' list which exist for it is all that is
+% % %                     tagsnew = [tagsnew; pststags];   %list of tags with same end position
+% % %                 end
+% % %             end
+% % %             
+% % %             
+% % %             %% Count psts for each protein according to their length and append PST Count in Result Files
+% % %             count1 = 0;
+% % %             count2 = 0;
+% % %             count3 = 0;
+% % %             count4 = 0;
+% % %             count5 = 0;
+% % %             count6 = 0;
+% % %             count7 = 0;
+% % %             count8 = 0;
+% % %             count9 = 0;
+% % %             count10 = 0;
             
-            %% looping through to find tags with same end position to isolate later
-            for j = 1:size(tags)
-                for k=2:size(tags)
-                    if j == k   %for the same tag do not compare but continue the loop
-                        continue
-                    end
-                    if isequal(tags{j,4}, tags{k,4}) %if the end position of tags is same then get them and make a list
-                        seqs = tags{j};
-                        len = tags{j,2};
-                        ending = tags{j,4};
-                    end
-                end
-                sameend = [sameend; seqs];   %list of tags with same end position
-                lens = [lens; len]; %list of lengths of the tags with same end position
-                endings = [endings; ending];
-                seqs =[];
-                len =[];
-                ending =[];
-            end
-            sameend = {sameend, lens, endings};
-            sameendtags =[sameend{:}];   %list of tags with same end position
-            
-            %% if the list of same end tags is empty that is tags have different/unique end values
-            uniqueendtags = {};
-            uniqueend =[];
-            if (isempty(sameendtags)) %getting tags with different/unique end values
-                for x=2:size(tags)
-                    seqs = tags{x,1};    %then get all the tags in 'tags' list which already has unique start values
-                    lens = tags{x,2};
-                    uniqueend = {seqs, lens};
-                    uniqueendtags = [uniqueendtags; uniqueend];
-                end
-                uniqueendtags = [uniqueendtags]; %list of tags with same end position
-            end
-            
-            %% if there are no tags with same ends then loop through unique tags
-            if (isempty(sameendtags))
-                findpst = [];
-                findtag = [];
-                tagswithoutmax = {};
-                taglistwithoutmax = {};
-                maxtag = [];
-                lenmat ={};
-                MaxValue = [];
-                findmax =[];
-                for i=2:size(tags)
-                    for j = 1:size(uniqueendtags)    %loop through list of tags with same end
-                        findpst =  strcmp (tags{i,1}, uniqueendtags{j,1});    %compare with the tags with unique start values
-                        if (isempty(findpst))   %if nothing is returned break the loop
-                            break
-                        end
-                        if findpst == 1    %if there is a match then
-                            taglen = tags{i,2};    %find length of matched tag
-                            lenmat = cell2mat(uniqueendtags(:,2));   %convert this to a matrix to loop through easily
-                            for j = 1:size(lenmat) %matrix of lengths of matched tags
-                                if lenmat(j) >= lenmat(:,1)    %find max length
-                                    MaxValue = lenmat(j);  %find maximum value in the list by looping through it
-                                end
-                            end
-                            if taglen == MaxValue   %if the tag length equals maximum value & lenmat(:) ~= MaxValue
-                                for x=1:size(lenmat)
-                                    findmax =  strfind(lenmat(x,1), MaxValue);
-                                    if findmax == 1
-                                        maxtag = tags{i,1};    %get the tag with max value
-                                        break
-                                    end
-                                end
-                                %else findx = strcmp(maxtag(1,1), tags(i,1))
-                                %if findx == 0
-                            else
-                                tagswithoutmax = [tags{i,1}];    %if it is not a match then add it to separate list
-                            end
-                        end
-                    end
-                    taglistwithoutmax = [taglistwithoutmax; tagswithoutmax];   %list of tags with unique ends
-                    tagswithoutmax = []; %empty to remove previous value from loop
-                end
-            end
-            
-            %% if tag list without max is empty check all lenghths then get all tags for there is no max
-            findmaxtag =[];
-            if (isempty(sameendtags))
-                if (isempty(taglistwithoutmax))
-                    for i=2:size(tags)
-                        findmaxtag =  strfind(maxtag(1,1), tags{i,1});
-                        if findmaxtag == 1
-                            break
-                        else
-                            tagswithoutmax = [tags{i,1}];
-                        end
-                        taglistwithoutmax = [taglistwithoutmax; tagswithoutmax];
-                    end
-                    taglistwithoutmax = [taglistwithoutmax]; %list of tags with unique ends
-                end
-            end
-            
-            %% if eliminating max tag does not leave behind anything in the list
-            taglistnomaxintags ={};
-            nomaxintags =[];
-            if (~isempty(uniqueendtags))
-                if (isempty(taglistwithoutmax))%if the list of same end tags is empty that is tags have different/unique end values
-                    for i=2:size(tags)
-                        seqs = tags{i,1};    %then get all the tags in 'tags' list which already has unique start values
-                        lens = tags{i,2};
-                        nomaxintags = {seqs, lens};
-                        taglistnomaxintags = [taglistnomaxintags; nomaxintags];
-                    end
-                    taglistnomaxintags = [taglistnomaxintags]; %list of tags with same end position
-                end
-            end
-            
-            %% Find sub psts with same end to eliminate
-            if (isempty(sameendtags))
-                pststags={};
-                tagsnew = {};
-                tagfindnew =[];
-                for i=2:size(tags)
-                    for j=1:size(uniqueendtags)
-                        tagfindnew =  strcmp(tags(i,1) , uniqueendtags{j,1});   %compare tag list with updated list of pst with same end to eliminate
-                        if tagfindnew == 1
-                            pststags = [];
-                            break
-                        else
-                            pststags = [tags(i,:)];
-                        end
-                    end
-                    tagsnew = [tagsnew; pststags];
-                    pststags = [];
-                end
-                
-                if (isempty(tagsnew))  %if this list is empty that is tags minus max value is empty
-                    for i=2:size(tags)
-                        pststags = [tags(i,:)];    %then get all the tags in 'tags' list which exist for it is all that is
-                        tagsnew = [tagsnew; pststags];   %list of tags with same end position
-                    end
-                    tagsnew = [tagsnew];
-                end
-            end
-            
-            %% Getting tag of max length to avoid counting same tag multiple times for different lengths
-            if (~isempty(sameendtags))
-                findpst = [];
-                findtag = [];
-                tagswithoutmax = {};
-                taglistwithoutmax = {};
-                maxtag = {};
-                lenmat ={};
-                MaxValue = [];
-                g ={};
-                findmax =[];
-                for i=2:size(tags)
-                    for j = 1:size(sameendtags)    %loop through list of tags with same end
-                        findpst =  strcmp (tags{i,1}, sameendtags{j,1});    %compare with the tags with unique start values
-                        if (isempty(findpst))   %if nothing is returned break the loop
-                            break
-                        end
-                        if findpst == 1    %if there is a match then
-                            taglen = tags{i,2};    %find length of matched tag
-                            lenmat = cell2mat(sameendtags(:,2));   %convert this to a matrix to loop through easily
-                            for j = 1:size(lenmat) %matrix of lengths of matched tags
-                                if lenmat(j) >= lenmat(:,1)    %find max length
-                                    MaxValue = lenmat(j);  %find maximum value in the list by looping through it
-                                end
-                            end
-                            if taglen == MaxValue   %if the tag length equals maximum value & lenmat(:) ~= MaxValue
-                                for x=1:size(lenmat)
-                                    findmax =  strfind(lenmat(x,1), MaxValue);
-                                    if findmax == 1
-                                        maxtag = {tags{i,1}, tags{i,4}};    %get the tag with max value
-                                        break
-                                    end
-                                end
-                                %else findx = strcmp(maxtag(1,1), tags(i,1))
-                                %if findx == 0
-                            else
-                                tagswithoutmax = {tags{i,1}, tags{i,4}};    %if it is not a match then add it to separate list
-                            end
-                        end
-                    end
-                    taglistwithoutmax = [taglistwithoutmax; tagswithoutmax];   %list of tags with unique ends
-                    tagswithoutmax = []; %empty to remove previous value from loop
-                end
-            end
-            
-            %% if eliminating max tag does not leave behind anything in the list
-            if (isempty(taglistwithoutmax))%if the list of same end tags is empty that is tags have different/unique end values
-                for i=2:size(tags)
-                    seqs = tags{i,1};    %then get all the tags in 'tags' list which already has unique start values
-                    lens = tags{i,2};
-                    tagswithoutmax = {seqs, lens};
-                    taglistwithoutmax = [taglistwithoutmax; tagswithoutmax];
-                end
-                taglistwithoutmax = [taglistwithoutmax]; %list of tags with same end position
-            end
-            
-            %% Update list of pst with same end
-            if (~isempty(sameendtags))
-                tagsameend = {};   %subset of psts with same end
-                tagswithoutmax = {};
-                for j = 1:size(taglistwithoutmax)
-                    for i=1:size(sameendtags)
-                        findtag =  strcmp(taglistwithoutmax(j,1) , sameendtags{i,1});   %compare updated taglist to get tags with same end
-                        if findtag == 1     %if match then get the matched pst
-                            findnum = strfind((cell2mat(taglistwithoutmax(j,2))) , sameendtags{i,3});
-                            if findnum == 1 %if match then see the end position
-                                tagswithoutmax = {taglistwithoutmax{j,1}, taglistwithoutmax{j,2}};
-                            end
-                        else    %if no match continue the loop
-                            continue
-                        end
-                    end
-                    tagsameend = [tagsameend; tagswithoutmax];    %subset of pst list updated with same end
-                    tagswithoutmax = [];
-                end
-                
-                %% Find sub psts with same end to eliminate
-                pststags={};
-                tagsnew = {};
-                tagfindnew =[];
-                for i=2:size(tags)
-                    for j=1:size(tagsameend)
-                        tagfindnew =  strcmp(tags(i,1) , tagsameend{j,1});   %compare tag list with updated list of pst with same end to eliminate
-                        if tagfindnew == 1   %if tags matched then see the end position
-                            findnumz = strfind((cell2mat(tags(i,4))) , tagsameend{j,2});
-                            if findnumz == 1 %if end position is same then skip the tag
-                                pststags = [];
-                            else    %if end position is different but tag is same then keep it
-                                pststags = [tags(i,:)];
-                            end
-                        else
-                            pststags = [tags(i,:)];
-                        end
-                    end
-                    tagsnew = [tagsnew; pststags];  %final tags list
-                    pststags = [];
-                end
-                
-                if (isempty(tagsnew))  %if this list is empty that is tags minus max value is empty
-                    pststags = [tags(i,:)];    %then get all the tags in 'tags' list which exist for it is all that is
-                    tagsnew = [tagsnew; pststags];   %list of tags with same end position
-                end
-            end
-            
-            
-            %% Count psts for each protein according to their length and append PST Count in Result Files
-            count1 = 0;
-            count2 = 0;
-            count3 = 0;
-            count4 = 0;
-            count5 = 0;
-            count6 = 0;
-            count7 = 0;
-            count8 = 0;
-            count9 = 0;
-            count10 = 0;
-            
-            %PST determination
-            if(~isempty(tagsnew))
-                for idx = 1:size(tagsnew)
-                    if tagsnew{idx,2} == 1
+% % %             %PST determination
+% % %             if(~isempty(tagsnew))
+% % %                 for idx = 1:size(tagsnew)
+            if(~isempty(tags))
+                for d = 1:size(tags)
+                    if tags{d,2} == 1
                         count1 = count1+1;
-                    elseif tagsnew{idx,2} == 2
+                    elseif tags{d,2} == 2
                         count2 = count2+1;
-                    elseif tagsnew{idx,2} == 3
+                    elseif tags{d,2} == 3
                         count3 = count3+1;
-                    elseif tagsnew{idx,2} == 4
+                    elseif tags{d,2} == 4
                         count4 = count4+1;
-                    elseif tagsnew{idx,2} == 5
+                    elseif tags{d,2} == 5
                         count5 = count5+1;
-                    elseif tagsnew{idx,2} == 6
+                    elseif tags{d,2} == 6
                         count6 = count6+1;
-                    elseif tagsnew{idx,2} == 7
+                    elseif tags{d,2} == 7
                         count7 = count7+1;
-                    elseif tagsnew{idx,2} == 8
+                    elseif tags{d,2} == 8
                         count8 = count8+1;
-                    elseif tagsnew{idx,2} == 9
+                    elseif tags{d,2} == 9
                         count9 = count9+1;
-                    else tagsnew{idx,2} == 10
+                    elseif tags{d,2} == 10
                         count10 = count10+1;
                     end
                 end

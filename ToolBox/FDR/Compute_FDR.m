@@ -1,12 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %           SPECTRUM: A MATLAB Toolbox for Top-down Proteomics     %
-%                           Version 3.0.0.0                        %
+%                           Version 2.0.0                          %
 %        Copyright (c) Biomedical Informatics Research Laboratory, %
 %          Lahore University of Management Sciences Lahore (LUMS), %
 %                           Pakistan.                              %
 %                (http://biolabs.lums.edu.pk/BIRL)                 %
 %                    (safee.ullah@gmail.com)                       %
-%                 Last Modified on: 25-May-2021                    %
+%                 Last Modified on: 25-October-2020                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function varargout = Compute_FDR(varargin)
 % COMPUTE_FDR MATLAB code for Compute_FDR.fig
@@ -204,30 +204,35 @@ FDR_estimation = FDR(Target, Decoy, Threshold,Cutoff);
 TargetDataWithFDR = TargetData(1:numel(FDR_estimation)-1,:);
 if (~isempty(TargetDataWithFDR))
 TargetDataWithFDR.FDR = FDR_estimation(1:numel(FDR_estimation)-1);
+% TargetDataWithFDR.qVal = FDR_estimation(1:numel(FDR_estimation)-1);
 end
 protein = TargetDataWithFDR.ProteinHeader;
 proteinCount = numel(unique(protein));
 
-% eValFDRCount = 0;
-% for i = 1:numel(TargetDataWithFDR.FileName)
-% if TargetDataWithFDR.E_Value(i) <= E_Value_Threshold
-%     eValFDRCount = eValFDRCount + 1;
-% end
-% end
+qVal = min(FDR_estimation);
+qValCount = 0;
+for i = 1:numel(TargetDataWithFDR.FileName)
+    if TargetDataWithFDR.FDR(i) == qVal
+%         TargetDataWithFDR.qVal(i) = qVal;
+        qValCount = qValCount + 1;
+%     else
+%         TargetDataWithFDR.qVal(i) = TargetDataWithFDR.FDR(i);
+    end
+end
 
-Complete_Taregt_File_FDR = strcat(Complete_Taregt_File(1:numel(Complete_Taregt_File)-4),'_FDR.csv');
+Complete_Taregt_File_FDR = strcat(Complete_Taregt_File(1:numel(Complete_Taregt_File)-4),'_FDR_Qvalue.csv');
 writetable(TargetDataWithFDR,Complete_Taregt_File_FDR)
 expProteinString = ['Total protein count reported by Experiment:' ' ' num2str(numel(TargetData.ProteinHeader))];
 evalProteinString = ['Total protein count reported by Experiment with E-value greater than 1E-10:' ' ' num2str(eValCount)];
 totalProteinString = ['Total protein reported with' ' ' num2str(Cutoff) '% FDR:' ' ' num2str(numel(protein))];
-%evalFDRProteinString = ['Total protein count reported with E-value greater than 1E-10 and' ' ' num2str(Cutoff) '% FDR:' ' ' num2str(eValFDRCount)];
+qvalProteinString = ['Total PrSMs reported with qvalue equals to ' num2str(qVal) ':' ' ' num2str(qValCount)];
 proteinString = ['Unique proteins count reported with' ' ' num2str(Cutoff) '% FDR:' ' ' num2str(proteinCount)];
 fid = fopen(Complete_Taregt_File_FDR, 'a');
 fprintf(fid, '\n%s\n', expProteinString);
 fprintf(fid, '%s\n', evalProteinString);
 fprintf(fid, '%s\n', totalProteinString);
-%fprintf(fid, '%s\n', evalFDRProteinString);
 fprintf(fid, '%s\n', proteinString);
+fprintf(fid, '%s\n', qvalProteinString);
 fclose(fid);
 msgbox({'FDR Computed !';'Target File Updated.'},'FDR Computed'); 
 
